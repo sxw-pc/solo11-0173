@@ -2,6 +2,7 @@
 from .store import one,record
 
 FORBIDDEN={'hazmat','live_animal'}
+CONTRACT_MAX_KG=32.0
 
 def booking(db,e,seq):
     bag=e['bag_id'];bid=e['booking_id']
@@ -20,7 +21,7 @@ def booking(db,e,seq):
     elif e.get('flight_destination',e['destination'])!=e['destination']:
         status,reason='held','flight_destination_mismatch'
     elif items&FORBIDDEN:status,reason='held','prohibited_item'
-    elif weight<=0 or weight>32:status,reason='held','weight_outside_contract'
+    elif weight<=0 or weight>CONTRACT_MAX_KG:status,reason='held','weight_outside_contract'
     db.execute('INSERT INTO booking VALUES(?,?,?,?,?,?,?,?)',
         (bid,e['passenger'],e['flight'],e['destination'],e['checked_at'],e['promised_at'],'active',1))
     db.execute('INSERT INTO bag_tag VALUES(?,?,?,?,?,?)',
@@ -49,4 +50,21 @@ def change(db,e,seq):
     from .sortation import rejudge
     from .claims import rejudge as rejudge_claims
     rejudge(db,bag,seq,e['event_id']);rejudge_claims(db,bag,seq,e['event_id'])
+    return {'status':status,'reason':reason}
+
+def publish_acceptance(db,bag,confirmed_kg,seq,ref):
+    """Publish measured 32kg carriage eligibility once; a decided contract is never replaced."""
+    row=one(db,'SELECT * FROM acceptance WHERE bag_id=?',(bag,))
+    if row and row['status']!='pending':return {'status':row['status'],'reason':'acceptance_already_decided'}
+    ok=confirmed_kg<=CONTRACT_MAX_KG
+    status='accepted' if ok else 'rejected'
+    reason='measured_weight_within_contract' if ok else 'measured_weight_above_contract'
+    version=row['version']+1 if row else 1
+    if row:db.execute('UPDATE acceptance SET status=?,reason=?,basis=?,confirmed_kg=?,version=? WHERE bag_id=?',
+                      (status,reason,ref,confirmed_kg,version,bag))
+    else:db.execute('INSERT INTO acceptance VALUES(?,?,?,?,?,?)',(bag,status,reason,ref,confirmed_kg,version))
+    record(db,bag,'baggage',ref,status,reason,seq)
+    tag=one(db,'SELECT * FROM bag_tag WHERE bag_id=?',(bag,))
+    if tag and not ok and tag['status']!='held':
+        db.execute("UPDATE bag_tag SET status='held' WHERE bag_id=?",(bag,))
     return {'status':status,'reason':reason}

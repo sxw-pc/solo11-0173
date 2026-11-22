@@ -1,0 +1,23 @@
+{
+  "shift": "SHIFT-1",
+  "note": "BAG-X reads a stable 392N on moving platform W1. World A (accel_world_a, a=0): true mass 40kg. World B (accel_world_b, a=2.45): true mass 32kg. Force pages, declared weights and provisional estimates are identical in both worlds; only the supplementary inertial original or a sealed static reweigh can tell them apart.",
+  "bookings": {"events": [
+    {"event_id": "E-BAGX", "kind": "booking", "bag_id": "BAG-X", "booking_id": "BK-X", "passenger": "P-X", "flight": "FL200", "destination": "DEST", "checked_at": "2026-11-22T07:50:00Z", "promised_at": "2026-11-22T12:00:00Z", "items": ["clothes"], "weight_kg": 32},
+    {"event_id": "E-BAGY", "kind": "booking", "bag_id": "BAG-Y", "booking_id": "BK-Y", "passenger": "P-Y", "flight": "FL200", "destination": "DEST", "checked_at": "2026-11-22T07:51:00Z", "promised_at": "2026-11-22T12:00:00Z", "items": ["books"], "weight_kg": 20}
+  ]},
+  "scale": {"scale_id": "W1", "station": "CHECKIN-1"},
+  "calibration": {"cal_id": "CAL-W1-S1", "scale_id": "W1", "batch": "BATCH-2026-11-22-S1", "gain": 1.0, "at": "2026-11-22T07:55:00Z"},
+  "tare": {"tare_id": "TARE-W1-S1", "scale_id": "W1", "at": "2026-11-22T07:56:00Z", "tare_n": 0.0, "drift_n": 0.0, "reproducible": true},
+  "forces": [
+    {"sample_id": "F-X", "scale_id": "W1", "bag_id": "BAG-X", "at": "2026-11-22T08:05:00Z", "force_n": 392.0},
+    {"sample_id": "F-Y", "scale_id": "W1", "bag_id": "BAG-Y", "at": "2026-11-22T08:06:00Z", "force_n": 306.25}
+  ],
+  "positions": [
+    {"position_id": "POS-X", "sample_id": "F-X", "bag_id": "BAG-X", "at": "2026-11-22T08:05:00Z", "corner_on_scale": true},
+    {"position_id": "POS-Y", "sample_id": "F-Y", "bag_id": "BAG-Y", "at": "2026-11-22T08:06:00Z", "corner_on_scale": true}
+  ],
+  "accel_world_a": {"series_id": "IMU-W1-S1-ZERO", "scale_id": "W1", "shift": "SHIFT-1", "points": [["2026-11-22T08:00:00Z", 0.0], ["2026-11-22T08:10:00Z", 0.0]]},
+  "accel_world_b": {"series_id": "IMU-W1-S1-LIFT", "scale_id": "W1", "shift": "SHIFT-1", "points": [["2026-11-22T08:00:00Z", 2.45], ["2026-11-22T08:10:00Z", 2.45]]},
+  "reweigh_x": {"reweigh_id": "RW-X-SEALED", "bag_id": "BAG-X", "at": "2026-11-22T08:20:00Z", "weight_kg": 32.0, "seal_intact": true},
+  "reweigh_x_repacked": {"reweigh_id": "RW-X-REPACK", "bag_id": "BAG-X", "at": "2026-11-22T08:50:00Z", "weight_kg": 28.0, "seal_intact": false}
+}

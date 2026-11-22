@@ -3,6 +3,7 @@ import hashlib
 import json
 import sqlite3
 from contextlib import contextmanager
+from datetime import datetime
 from pathlib import Path
 
 SCHEMA = """
@@ -30,11 +31,32 @@ CREATE TABLE IF NOT EXISTS decision(id INTEGER PRIMARY KEY,bag_id TEXT NOT NULL,
 CREATE TABLE IF NOT EXISTS checkin_scale(id TEXT PRIMARY KEY,station TEXT NOT NULL,source_raw TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS scale_sample(id TEXT PRIMARY KEY,scale_id TEXT NOT NULL REFERENCES checkin_scale(id),bag_id TEXT NOT NULL,at TEXT NOT NULL,force_n REAL NOT NULL,raw TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS excess_fee(bag_id TEXT PRIMARY KEY,estimated_kg REAL NOT NULL,fee_cents INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS scale_calibration(cal_id TEXT PRIMARY KEY,scale_id TEXT NOT NULL REFERENCES checkin_scale(id),
+  batch TEXT NOT NULL,gain REAL NOT NULL,at TEXT NOT NULL,raw TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS scale_tare(tare_id TEXT PRIMARY KEY,scale_id TEXT NOT NULL REFERENCES checkin_scale(id),
+  at TEXT NOT NULL,tare_n REAL NOT NULL,drift_n REAL NOT NULL,reproducible INTEGER NOT NULL,raw TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS platform_accel(series_id TEXT PRIMARY KEY,scale_id TEXT NOT NULL REFERENCES checkin_scale(id),
+  shift TEXT NOT NULL,points TEXT NOT NULL,raw TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS sample_position(position_id TEXT PRIMARY KEY,sample_id TEXT NOT NULL REFERENCES scale_sample(id),
+  bag_id TEXT NOT NULL,at TEXT NOT NULL,corner_on_scale INTEGER NOT NULL,raw TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS sensor_overload(overload_id TEXT PRIMARY KEY,sample_id TEXT NOT NULL REFERENCES scale_sample(id),
+  scale_id TEXT NOT NULL,at TEXT NOT NULL,raw TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS static_reweigh(reweigh_id TEXT PRIMARY KEY,bag_id TEXT NOT NULL,at TEXT NOT NULL,
+  weight_kg REAL NOT NULL,seal_intact INTEGER NOT NULL,raw TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS mass_ticket(bag_id TEXT NOT NULL,version INTEGER NOT NULL,method TEXT NOT NULL,
+  reliable INTEGER NOT NULL,confirmed_kg REAL,feasible_min_kg REAL,feasible_max_kg REAL,issues TEXT NOT NULL,
+  evidence_ref TEXT NOT NULL,at TEXT NOT NULL,PRIMARY KEY(bag_id,version));
+CREATE TABLE IF NOT EXISTS fee_settlement(bag_id TEXT PRIMARY KEY,fee_cents INTEGER NOT NULL,basis_kg REAL NOT NULL,
+  method TEXT NOT NULL,ticket_version INTEGER NOT NULL,settled_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS acceptance(bag_id TEXT PRIMARY KEY,status TEXT NOT NULL,reason TEXT NOT NULL,
+  basis TEXT NOT NULL,confirmed_kg REAL,version INTEGER NOT NULL);
 """
 
 def digest(raw):return hashlib.sha256(raw).hexdigest()
 
 def canonical(obj):return json.dumps(obj,sort_keys=True,ensure_ascii=False,separators=(',',':'))
+
+def epoch(ts):return datetime.fromisoformat(ts.replace('Z','+00:00')).timestamp()
 
 @contextmanager
 def connect(path):
