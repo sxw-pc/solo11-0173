@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS claim(claim_id TEXT PRIMARY KEY,bag_id TEXT NOT NULL,
   kind TEXT NOT NULL,at TEXT NOT NULL,status TEXT NOT NULL,reason TEXT NOT NULL,amount_cents INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS decision(id INTEGER PRIMARY KEY,bag_id TEXT NOT NULL,subsystem TEXT NOT NULL,
   event_id TEXT NOT NULL,status TEXT NOT NULL,reason TEXT NOT NULL,created_seq INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS settlement(payment_id TEXT PRIMARY KEY,claim_id TEXT NOT NULL,
+  payer TEXT NOT NULL,amount_cents INTEGER NOT NULL,status TEXT NOT NULL,source_sha TEXT NOT NULL);
 """
 
 def digest(raw):return hashlib.sha256(raw).hexdigest()

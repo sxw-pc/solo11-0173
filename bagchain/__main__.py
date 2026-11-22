@@ -5,6 +5,7 @@ from pathlib import Path
 from .audit import audit
 from .report import report
 from .source import import_file
+from .settlement import pay
 
 def demo(db):
     fixtures=Path(__file__).resolve().parent.parent/'fixtures'
@@ -20,10 +21,12 @@ def main():
     view=sub.add_parser('report');view.add_argument('--db',required=True);view.add_argument('--bag',required=True)
     check=sub.add_parser('audit');check.add_argument('--db',required=True)
     sample=sub.add_parser('demo');sample.add_argument('--db',required=True)
+    payment=sub.add_parser('settle-pay');payment.add_argument('file');payment.add_argument('--db',required=True);payment.add_argument('--bank',required=True)
     args=parser.parse_args()
     if args.command.endswith('-import'):result=import_file(args.db,args.command.split('-')[0],args.file)
     elif args.command=='report':result=report(args.db,args.bag)
     elif args.command=='audit':result=audit(args.db)
+    elif args.command=='settle-pay':result=pay(args.db,args.bank,args.file)
     else:result=demo(args.db)
     print(json.dumps(result,ensure_ascii=False,indent=2))
 
