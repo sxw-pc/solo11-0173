@@ -15,11 +15,7 @@ def test_basic_late_payment():
         root = Path(directory)
         db, bank = root / 'case.sqlite', root / 'bank.json'
         import_file(db, 'bag', FIXTURES / 'bag-ok.json')
-        sort = json.loads((FIXTURES / 'sort-ok.json').read_text())
-        sort['events'] = sort['events'][:3]
-        partial = root / 'partial.json'
-        partial.write_text(json.dumps(sort))
-        import_file(db, 'sort', partial)
+        import_file(db, 'sort', FIXTURES / 'sort-before-arrival.json')
         assert import_file(db, 'claim', FIXTURES / 'late-claim.json')['results'][0]['status'] == 'trace'
         import_file(db, 'sort', FIXTURES / 'late-arrival.json')
         assert report(db, 'BAG-1')['claims'][0]['status'] == 'compensable'
