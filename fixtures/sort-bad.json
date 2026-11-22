@@ -1,0 +1,1 @@
+{"events":[{"event_id":"BAD-SCAN","kind":"scan","bag_id":"BAG-1","scan_id":"S-BAD","station":"ORIGIN","flight":"FL999","seen_at":"2026-11-22T08:11:00Z","actor":"sorter-A"},{"event_id":"BAD-HANDOFF","kind":"handoff","bag_id":"BAG-1","handoff_id":"H-BAD","from_station":"TRANSFER","to_station":"DEST","at":"2026-11-22T08:30:00Z","from_actor":"one","to_actor":"one"}]}
