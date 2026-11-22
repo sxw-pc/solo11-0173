@@ -12,5 +12,7 @@ def report(db_path,bag):
                 'handoffs':all_rows(db,'SELECT * FROM handoff WHERE bag_id=? ORDER BY at,handoff_id',(bag,)),
                 'arrivals':all_rows(db,'SELECT * FROM arrival WHERE bag_id=? ORDER BY at,arrival_id',(bag,)),
                 'claims':all_rows(db,'SELECT * FROM claim WHERE bag_id=? ORDER BY at,claim_id',(bag,)),
+                'screen_scans':all_rows(db,'SELECT * FROM screen_scan WHERE bag_id=? ORDER BY seen_at,scan_id',(bag,)),
+                'screen_labels':all_rows(db,'SELECT * FROM screen_label WHERE bag_id=? ORDER BY label_id',(bag,)),
                 'decisions':all_rows(db,'SELECT * FROM decision WHERE bag_id=? ORDER BY id',(bag,)),
                 'sources':all_rows(db,'SELECT DISTINCT source_sha FROM evidence WHERE bag_id=?',(bag,))}
