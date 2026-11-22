@@ -1,0 +1,42 @@
+{
+  "windows": [
+    {
+      "zone_id": "C1",
+      "cert_id": "CERT-C1-TRACK-001",
+      "threshold_seconds": 900,
+      "calibration": {"G1": [0, 0]},
+      "carousel_runs": [
+        ["2026-11-22T07:55:00Z", "2026-11-22T09:10:00Z"]
+      ],
+      "pages": [
+        {"tally_id": "C1-W1", "zone_id": "C1", "gate_id": "G1", "at": "2026-11-22T08:00:00Z", "entered": 1, "exited": 0, "reset": false, "occluded": false, "capacity_bound": 0},
+        {"tally_id": "C1-W2", "zone_id": "C1", "gate_id": "G1", "at": "2026-11-22T08:10:00Z", "entered": 1, "exited": 1, "reset": false, "occluded": false, "capacity_bound": 0},
+        {"tally_id": "C1-W3", "zone_id": "C1", "gate_id": "G1", "at": "2026-11-22T08:20:00Z", "entered": 0, "exited": 1, "reset": false, "occluded": false, "capacity_bound": 0}
+      ],
+      "tracks": [
+        {"track_id": "TRK-9F31", "entry_gate": "G1", "exit_gate": "G1", "entry_at": "2026-11-22T08:00:00Z", "exit_at": "2026-11-22T08:20:00Z", "complete": true},
+        {"track_id": "TRK-9F32", "entry_gate": "G1", "exit_gate": "G1", "entry_at": "2026-11-22T08:10:00Z", "exit_at": "2026-11-22T08:10:00Z", "complete": true}
+      ],
+      "tickets": []
+    },
+    {
+      "zone_id": "C2",
+      "cert_id": "CERT-C2-TICKET-001",
+      "threshold_seconds": 900,
+      "calibration": {"G1": [0, 0]},
+      "carousel_runs": [
+        ["2026-11-22T07:55:00Z", "2026-11-22T09:10:00Z"]
+      ],
+      "pages": [
+        {"tally_id": "C2-W1", "zone_id": "C2", "gate_id": "G1", "at": "2026-11-22T08:00:00Z", "entered": 2, "exited": 0, "reset": false, "occluded": false, "capacity_bound": 0},
+        {"tally_id": "C2-W2", "zone_id": "C2", "gate_id": "G1", "at": "2026-11-22T08:08:00Z", "entered": 0, "exited": 1, "reset": false, "occluded": false, "capacity_bound": 0},
+        {"tally_id": "C2-W3", "zone_id": "C2", "gate_id": "G1", "at": "2026-11-22T08:20:00Z", "entered": 0, "exited": 1, "reset": false, "occluded": false, "capacity_bound": 0}
+      ],
+      "tracks": [],
+      "tickets": [
+        {"ticket_no": "RCPT-7741", "entry_gate": "G1", "exit_gate": "G1", "entry_at": "2026-11-22T08:00:00Z", "exit_at": "2026-11-22T08:20:00Z", "entry_source_sha": "sha:ticket-entry-7741", "exit_source_sha": "sha:ticket-exit-7741"},
+        {"ticket_no": "RCPT-7742", "entry_gate": "G1", "exit_gate": "G1", "entry_at": "2026-11-22T08:00:00Z", "exit_at": "2026-11-22T08:08:00Z", "entry_source_sha": "sha:ticket-entry-7742", "exit_source_sha": "sha:ticket-exit-7742"}
+      ]
+    }
+  ]
+}

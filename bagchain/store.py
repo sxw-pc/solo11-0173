@@ -28,8 +28,26 @@ CREATE TABLE IF NOT EXISTS claim(claim_id TEXT PRIMARY KEY,bag_id TEXT NOT NULL,
 CREATE TABLE IF NOT EXISTS decision(id INTEGER PRIMARY KEY,bag_id TEXT NOT NULL,subsystem TEXT NOT NULL,
   event_id TEXT NOT NULL,status TEXT NOT NULL,reason TEXT NOT NULL,created_seq INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS reclaim_zone(id TEXT PRIMARY KEY,carousel TEXT NOT NULL,capacity INTEGER NOT NULL);
-CREATE TABLE IF NOT EXISTS reclaim_tally(id TEXT PRIMARY KEY,zone_id TEXT NOT NULL REFERENCES reclaim_zone(id),at TEXT NOT NULL,entered INTEGER NOT NULL,exited INTEGER NOT NULL,raw TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS reclaim_tally(id TEXT PRIMARY KEY,zone_id TEXT NOT NULL REFERENCES reclaim_zone(id),at TEXT NOT NULL,entered INTEGER,exited INTEGER,raw TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS reclaim_service(zone_id TEXT PRIMARY KEY,queue_count INTEGER NOT NULL,status TEXT NOT NULL);
+-- Versioned wait evidence. The anonymous tally/count tables above are never altered:
+-- voluntary ticket numbers and anonymous track ids live only in these separate tables.
+CREATE TABLE IF NOT EXISTS reclaim_evidence_file(sha TEXT PRIMARY KEY,zone_id TEXT NOT NULL,kind TEXT NOT NULL,
+  raw BLOB NOT NULL,imported_seq INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS reclaim_gate_calibration(zone_id TEXT NOT NULL,gate_id TEXT NOT NULL,version INTEGER NOT NULL,
+  bias_lo_seconds INTEGER NOT NULL,bias_hi_seconds INTEGER NOT NULL,
+  PRIMARY KEY(zone_id,gate_id,version));
+CREATE TABLE IF NOT EXISTS reclaim_wait_certificate(cert_id TEXT NOT NULL,zone_id TEXT NOT NULL,version INTEGER NOT NULL,
+  window_start TEXT,window_end TEXT,threshold_seconds INTEGER NOT NULL,
+  lower_bound INTEGER NOT NULL,upper_bound INTEGER NOT NULL,observed_entered INTEGER NOT NULL,
+  observed_exited INTEGER NOT NULL,status TEXT NOT NULL,problems TEXT NOT NULL,
+  lower_pairing TEXT NOT NULL,upper_pairing TEXT NOT NULL,
+  basis TEXT NOT NULL,sources TEXT NOT NULL,created_seq INTEGER NOT NULL,
+  PRIMARY KEY(zone_id,version));
+CREATE TABLE IF NOT EXISTS reclaim_ticket_voucher(voucher_id TEXT PRIMARY KEY,cert_id TEXT NOT NULL,zone_id TEXT NOT NULL,
+  ticket_no TEXT NOT NULL,entry_at TEXT NOT NULL,exit_at TEXT NOT NULL,wait_seconds INTEGER NOT NULL,
+  status TEXT NOT NULL,reason TEXT NOT NULL,entry_source_sha TEXT NOT NULL,exit_source_sha TEXT NOT NULL,
+  version INTEGER NOT NULL);
 """
 
 def digest(raw):return hashlib.sha256(raw).hexdigest()
