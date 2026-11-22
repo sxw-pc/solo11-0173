@@ -15,7 +15,7 @@ def demo(db):
 def main():
     parser=argparse.ArgumentParser(description='Offline baggage evidence and custody ledger')
     sub=parser.add_subparsers(dest='command',required=True)
-    for name in ('bag-import','sort-import','claim-import'):
+    for name in ('bag-import','sort-import','claim-import','locker-import'):
         cmd=sub.add_parser(name);cmd.add_argument('file');cmd.add_argument('--db',required=True)
     view=sub.add_parser('report');view.add_argument('--db',required=True);view.add_argument('--bag',required=True)
     check=sub.add_parser('audit');check.add_argument('--db',required=True)
