@@ -1,4 +1,11 @@
-"""Raw three-channel baggage screening profiles and scans."""
+"""Raw three-channel baggage screening profiles and scans.
+
+The profile table keeps only the three-channel reference vectors per material
+revision; the scan table keeps the original raw channels.  Neither table stores
+a conclusion about the bag's contents: a single nearest reference is a
+provisional label produced later by :mod:`bagchain.screening`, never proof of
+what is inside the bag.
+"""
 import json
 from .store import one,record
 

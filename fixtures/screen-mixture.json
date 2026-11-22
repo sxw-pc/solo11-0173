@@ -1,0 +1,153 @@
+{
+  "events": [
+    {
+      "event_id": "M1",
+      "kind": "screen_profile",
+      "bag_id": "BAG-2",
+      "profile_id": "ref-R",
+      "material": "R",
+      "channels": [
+        4,
+        6,
+        2
+      ],
+      "revision": 1
+    },
+    {
+      "event_id": "M2",
+      "kind": "screen_profile",
+      "bag_id": "BAG-2",
+      "profile_id": "ref-P",
+      "material": "P",
+      "channels": [
+        7,
+        2,
+        5
+      ],
+      "revision": 1
+    },
+    {
+      "event_id": "M3",
+      "kind": "screen_profile",
+      "bag_id": "BAG-2",
+      "profile_id": "ref-C",
+      "material": "C",
+      "channels": [
+        5.5,
+        4,
+        3.5
+      ],
+      "revision": 1
+    },
+    {
+      "event_id": "M4",
+      "kind": "screen_scan",
+      "bag_id": "BAG-2",
+      "scan_id": "XM",
+      "channels": [
+        5.5,
+        4,
+        3.5
+      ],
+      "seen_at": "2026-11-22T08:10:00Z"
+    },
+    {
+      "event_id": "M5",
+      "kind": "screen_label",
+      "bag_id": "BAG-2",
+      "label_id": "LM",
+      "scan_id": "XM"
+    },
+    {
+      "event_id": "M6",
+      "kind": "unmix_batch",
+      "bag_id": "BAG-2",
+      "batch_id": "BATCH-1",
+      "scan_id": "XM",
+      "reference_revision": 1,
+      "restricted_material": "R",
+      "calibration": {
+        "calibration_id": "CAL-1",
+        "calibrated_at": "2026-11-22T07:55:00Z",
+        "bias_limit": 0.05,
+        "thickness_relative": 0.01
+      },
+      "voxels": [
+        {
+          "voxel_id": "V1",
+          "position": "core",
+          "channels": [
+            5.5,
+            4,
+            3.5
+          ],
+          "thickness": 1.0,
+          "volume": 1.0,
+          "occluded": false,
+          "inspectable": true
+        },
+        {
+          "voxel_id": "V2",
+          "position": "outer-pocket",
+          "channels": [
+            6.25,
+            3.0,
+            4.25
+          ],
+          "thickness": 1.0,
+          "volume": 1.0,
+          "occluded": false,
+          "inspectable": true
+        },
+        {
+          "voxel_id": "V3",
+          "position": "metal-shell",
+          "channels": [
+            4.75,
+            5.0,
+            2.75
+          ],
+          "thickness": 1.0,
+          "volume": 2.0,
+          "occluded": true,
+          "inspectable": false
+        }
+      ]
+    },
+    {
+      "event_id": "M7",
+      "kind": "unmix_rescan",
+      "bag_id": "BAG-2",
+      "batch_id": "BATCH-1",
+      "followup_id": "RA-1",
+      "device_id": "SCAN4-1",
+      "calibration_version": "4CH-v1",
+      "restricted_material": "R",
+      "reference_channel4": {
+        "R": 3.0,
+        "P": 8.0,
+        "C": 5.0
+      },
+      "residual_tolerance": 1e-06,
+      "voxel_channel4": {
+        "V1": 5.0,
+        "V2": 6.75
+      }
+    },
+    {
+      "event_id": "M8",
+      "kind": "unmix_swab",
+      "bag_id": "BAG-2",
+      "batch_id": "BATCH-1",
+      "followup_id": "RB-1",
+      "pocket_position": "outer-pocket",
+      "seal_id": "SEAL-1",
+      "passenger_present": true,
+      "actors": [
+        "officer-A",
+        "officer-B"
+      ],
+      "r_detected": false
+    }
+  ]
+}

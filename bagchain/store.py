@@ -28,6 +28,22 @@ CREATE TABLE IF NOT EXISTS claim(claim_id TEXT PRIMARY KEY,bag_id TEXT NOT NULL,
 CREATE TABLE IF NOT EXISTS screen_profile(profile_id TEXT PRIMARY KEY,bag_id TEXT NOT NULL,material TEXT NOT NULL,channels_json TEXT NOT NULL,revision INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS screen_scan(scan_id TEXT PRIMARY KEY,bag_id TEXT NOT NULL,channels_json TEXT NOT NULL,seen_at TEXT NOT NULL,state TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS screen_label(label_id TEXT PRIMARY KEY,bag_id TEXT NOT NULL,scan_id TEXT NOT NULL,material TEXT NOT NULL,distance REAL NOT NULL,state TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS unmix_batch(batch_id TEXT PRIMARY KEY,bag_id TEXT NOT NULL,scan_id TEXT NOT NULL,
+  reference_revision INTEGER NOT NULL,calibration_json TEXT NOT NULL,total_volume REAL NOT NULL,
+  occluded_volume REAL NOT NULL,created_seq INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS unmix_voxel(voxel_id TEXT PRIMARY KEY,batch_id TEXT NOT NULL,bag_id TEXT NOT NULL,
+  channels_json TEXT NOT NULL,thickness_json TEXT NOT NULL,occluded INTEGER NOT NULL,volume REAL NOT NULL,
+  inspectable INTEGER NOT NULL,position TEXT NOT NULL,r_fraction_lo REAL,r_fraction_hi REAL,
+  residual REAL NOT NULL,state TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS unmix_bag_result(result_id TEXT PRIMARY KEY,batch_id TEXT NOT NULL,bag_id TEXT NOT NULL,
+  route TEXT NOT NULL,result_version INTEGER NOT NULL,r_fraction_lo REAL,r_fraction_hi REAL,
+  confirmed_volume REAL NOT NULL,total_volume REAL NOT NULL,occluded_volume REAL NOT NULL,
+  unexplained_volume REAL NOT NULL,rescan_positions_json TEXT NOT NULL,state TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS unmix_followup(followup_id TEXT PRIMARY KEY,batch_id TEXT NOT NULL,bag_id TEXT NOT NULL,
+  route TEXT NOT NULL,device_id TEXT NOT NULL,calibration_version TEXT NOT NULL,evidence_json TEXT NOT NULL,
+  coverage_json TEXT NOT NULL,created_seq INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS manual_open(open_id TEXT PRIMARY KEY,batch_id TEXT NOT NULL,bag_id TEXT NOT NULL,
+  at TEXT NOT NULL,actors_json TEXT NOT NULL,findings_json TEXT NOT NULL,created_seq INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS decision(id INTEGER PRIMARY KEY,bag_id TEXT NOT NULL,subsystem TEXT NOT NULL,
   event_id TEXT NOT NULL,status TEXT NOT NULL,reason TEXT NOT NULL,created_seq INTEGER NOT NULL);
 """

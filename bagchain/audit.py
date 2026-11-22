@@ -4,7 +4,7 @@ from pathlib import Path
 from .source import import_file
 from .store import all_rows,connect,digest
 
-TABLES=('booking','bag_tag','scan','load_manifest','handoff','arrival','claim','screen_profile','screen_scan','screen_label','decision','evidence')
+TABLES=('booking','bag_tag','scan','load_manifest','handoff','arrival','claim','screen_profile','screen_scan','screen_label','unmix_batch','unmix_voxel','unmix_bag_result','unmix_followup','manual_open','decision','evidence')
 
 def audit(db_path):
     with connect(db_path) as db:
