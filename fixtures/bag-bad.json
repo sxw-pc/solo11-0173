@@ -1,0 +1,1 @@
+{"events":[{"event_id":"BAD-BAG","kind":"booking","bag_id":"BAG-BAD","booking_id":"BK-BAD","passenger":"P-2","flight":"FL200","destination":"DEST","checked_at":"2026-11-22T08:00:00Z","promised_at":"2026-11-22T09:00:00Z","items":["hazmat"],"weight_kg":45}]}
