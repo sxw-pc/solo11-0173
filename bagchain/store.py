@@ -26,7 +26,25 @@ CREATE TABLE IF NOT EXISTS arrival(arrival_id TEXT PRIMARY KEY,bag_id TEXT NOT N
 CREATE TABLE IF NOT EXISTS claim(claim_id TEXT PRIMARY KEY,bag_id TEXT NOT NULL,claimant TEXT NOT NULL,
   kind TEXT NOT NULL,at TEXT NOT NULL,status TEXT NOT NULL,reason TEXT NOT NULL,amount_cents INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS decision(id INTEGER PRIMARY KEY,bag_id TEXT NOT NULL,subsystem TEXT NOT NULL,
-  event_id TEXT NOT NULL,status TEXT NOT NULL,reason TEXT NOT NULL,created_seq INTEGER NOT NULL);
+  event_id TEXT NOT NULL,status TEXT NOT NULL,reason TEXT NOT NULL,created_seq INTEGER NOT NULL,
+  provenance TEXT);
+CREATE TABLE IF NOT EXISTS reader_batch(batch_sha TEXT NOT NULL,policy TEXT NOT NULL,raw BLOB NOT NULL,
+  sort_source_sha TEXT,created_seq INTEGER NOT NULL,PRIMARY KEY(batch_sha,policy));
+CREATE TABLE IF NOT EXISTS reader_calibration(id INTEGER PRIMARY KEY,batch_sha TEXT NOT NULL,policy TEXT NOT NULL,
+  reader_id TEXT NOT NULL,restart_seq INTEGER NOT NULL,offset_s REAL NOT NULL,drift_s_per_s REAL NOT NULL,
+  beacon_frame_ids TEXT NOT NULL,epoch_start_device TEXT NOT NULL,epoch_end_device TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS reader_frame(frame_id TEXT NOT NULL,batch_sha TEXT NOT NULL,policy TEXT NOT NULL,
+  reader_id TEXT,frame_type TEXT NOT NULL,bag_id TEXT,epc TEXT,gate TEXT,corrected_at TEXT,
+  received_at TEXT,rssi_db REAL,zone TEXT,crc_ok INTEGER,usable INTEGER NOT NULL,role TEXT NOT NULL,
+  reason TEXT NOT NULL,evidence_json TEXT NOT NULL,PRIMARY KEY(batch_sha,policy,frame_id));
+CREATE TABLE IF NOT EXISTS reader_hypothesis(id INTEGER PRIMARY KEY,batch_sha TEXT NOT NULL,policy TEXT NOT NULL,
+  hypothesis_no INTEGER NOT NULL,bag_id TEXT NOT NULL,gate TEXT,feasible INTEGER NOT NULL,
+  unique_solution INTEGER NOT NULL,score REAL NOT NULL,rank_no INTEGER NOT NULL,
+  assignment_json TEXT NOT NULL,reasons_json TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS reader_decision(id INTEGER PRIMARY KEY,batch_sha TEXT NOT NULL,policy TEXT NOT NULL,
+  bag_id TEXT NOT NULL,outcome TEXT NOT NULL,gate TEXT,flight TEXT,station TEXT,actor TEXT,seen_at TEXT,
+  scan_event_id TEXT,load_event_id TEXT,reason TEXT NOT NULL,anchors_json TEXT NOT NULL,
+  decisive_frame_ids TEXT NOT NULL,missing_anchor TEXT);
 """
 
 def digest(raw):return hashlib.sha256(raw).hexdigest()
@@ -39,6 +57,10 @@ def connect(path):
     db=sqlite3.connect(target);db.row_factory=sqlite3.Row
     try:
         db.executescript(SCHEMA)
+        # 旧库升级：decision 表补 provenance 列，保留既有审计数据。
+        cols={r[1] for r in db.execute('PRAGMA table_info(decision)')}
+        if 'provenance' not in cols:
+            db.execute('ALTER TABLE decision ADD COLUMN provenance TEXT')
         yield db
     finally:db.close()
 
@@ -47,6 +69,7 @@ def one(db,sql,args=()):
 
 def all_rows(db,sql,args=()):return [dict(r) for r in db.execute(sql,args)]
 
-def record(db,bag,subsystem,event,status,reason,seq):
-    db.execute('INSERT INTO decision(bag_id,subsystem,event_id,status,reason,created_seq) VALUES(?,?,?,?,?,?)',
-               (bag,subsystem,event,status,reason,seq))
+def record(db,bag,subsystem,event,status,reason,seq,provenance=None):
+    if isinstance(provenance,(dict,list)):provenance=canonical(provenance)
+    db.execute('INSERT INTO decision(bag_id,subsystem,event_id,status,reason,created_seq,provenance) VALUES(?,?,?,?,?,?,?)',
+               (bag,subsystem,event,status,reason,seq,provenance))

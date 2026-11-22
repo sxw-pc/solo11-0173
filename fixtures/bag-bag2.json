@@ -1,0 +1,1 @@
+{"events":[{"event_id":"E1-B2","kind":"booking","bag_id":"BAG-2","booking_id":"BK-2","passenger":"P-2","flight":"FL200","destination":"DEST2","checked_at":"2026-11-22T08:00:00Z","promised_at":"2026-11-22T09:00:00Z","items":["books"],"weight_kg":9}]}

@@ -21,7 +21,7 @@ def scan(db,e,seq):
         if last and e['seen_at']<last['seen_at']:status,reason='held','scan_time_reversed'
     db.execute('INSERT INTO scan VALUES(?,?,?,?,?,?,?,?)',
                (e['scan_id'],bag,e['station'],e['flight'],e['seen_at'],e['actor'],status,reason))
-    record(db,bag,'sortation',e['event_id'],status,reason,seq)
+    record(db,bag,'sortation',e['event_id'],status,reason,seq,e.get('provenance'))
     return {'status':status,'reason':reason}
 
 def handoff(db,e,seq):
@@ -56,7 +56,7 @@ def load(db,e,seq):
     elif not e['position'] or not e['loader']:status,reason='held','load_evidence_incomplete'
     db.execute('INSERT INTO load_manifest VALUES(?,?,?,?,?,?,?,?)',
                (e['load_id'],bag,e['flight'],e['position'],e['confirmed_at'],e['loader'],status,reason))
-    record(db,bag,'sortation',e['event_id'],status,reason,seq)
+    record(db,bag,'sortation',e['event_id'],status,reason,seq,e.get('provenance'))
     return {'status':status,'reason':reason}
 
 def arrival(db,e,seq):

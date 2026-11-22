@@ -13,7 +13,14 @@ HANDLERS={
     'claim':('claims','claim'),
 }
 
-def import_file(db_path,kind,file):
+def import_file(db_path,kind,file,extra_writer=None):
+    """导入一份本地证据文件。
+
+    kind 仅接受 bag/sort/claim；整份文件在同一个 SQLite 事务内投影。
+    extra_writer(db, sha, results) 在同一事务内执行（供离线读头采集器把原始帧、
+    校准、假设与决定和它生成的 scan/load 事件原子落库），任何异常都会连同
+    业务投影一起回滚。
+    """
     if kind not in ('bag','sort','claim'):raise ValueError('unknown_import_kind')
     raw=Path(file).read_bytes();doc=json.loads(raw)
     if not isinstance(doc.get('events'),list) or not doc['events']:raise ValueError('events_required')
@@ -39,4 +46,5 @@ def import_file(db_path,kind,file):
             else:from . import claims as module
             result=getattr(module,fn_name)(db,e,seq)
             results.append({'event_id':e['event_id'],**result})
+        if extra_writer is not None:extra_writer(db,sha,results)
     return {'source_sha':sha,'results':results}

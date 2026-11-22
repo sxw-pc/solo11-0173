@@ -13,4 +13,10 @@ def report(db_path,bag):
                 'arrivals':all_rows(db,'SELECT * FROM arrival WHERE bag_id=? ORDER BY at,arrival_id',(bag,)),
                 'claims':all_rows(db,'SELECT * FROM claim WHERE bag_id=? ORDER BY at,claim_id',(bag,)),
                 'decisions':all_rows(db,'SELECT * FROM decision WHERE bag_id=? ORDER BY id',(bag,)),
-                'sources':all_rows(db,'SELECT DISTINCT source_sha FROM evidence WHERE bag_id=?',(bag,))}
+                'sources':all_rows(db,'SELECT DISTINCT source_sha FROM evidence WHERE bag_id=?',(bag,)),
+                'reader_decisions':all_rows(
+                    db,'SELECT * FROM reader_decision WHERE bag_id=? ORDER BY id',(bag,)),
+                'reader_frames':all_rows(
+                    db,'SELECT * FROM reader_frame WHERE bag_id=? ORDER BY corrected_at,frame_id',(bag,)),
+                'reader_hypotheses':all_rows(
+                    db,'SELECT * FROM reader_hypothesis WHERE bag_id=? ORDER BY id',(bag,))}
